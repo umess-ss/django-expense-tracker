@@ -17,12 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from expenses.views import ExpenseViewSet, IncomeViewSet
+from expenses.views import ExpenseViewSet, IncomeViewSet, CategoryViewSet
 
 
 router = DefaultRouter()
 router.register(r'expenses', ExpenseViewSet, basename='expense')
 router.register(r'income',IncomeViewSet, basename='income')
+router.register(r'category',CategoryViewSet, basename='category')
 
 
 urlpatterns = [

@@ -50,12 +50,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        querset = Category.objects.filter(Q(user=self.request.user) | Q(user__isnull = True))
+        queryset = Category.objects.filter(Q(user=self.request.user) | Q(user__isnull = True))
 
         transaction_type = self.request.query_params.get('type')
         if transaction_type:
-            querset = querset.filter(transaction_type=transaction_type.UPPER())
-        return querset
+            queryset = queryset.filter(transaction_type=transaction_type.upper())
+        return queryset
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
