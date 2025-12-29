@@ -24,7 +24,7 @@ const LoginForm = () =>{
         } catch (error) {
             setError("Invalid Username or Password. Please Try Again...")
         }
-    }
+    };
 
 
 
