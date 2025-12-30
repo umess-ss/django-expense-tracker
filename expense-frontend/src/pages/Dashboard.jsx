@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
 
 const Dashboard = () =>{
     const navigate = useNavigate();
@@ -148,7 +149,7 @@ const Dashboard = () =>{
                         </option>
                         {categories.map(cat =>(
                             <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))};
+                        ))}
                     </select>
 
 
