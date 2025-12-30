@@ -6,6 +6,13 @@ const Dashboard = () =>{
     const navigate = useNavigate();
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
+    const [formData,setFormData] = useState({
+            title: '',
+            category:'',
+            amount: '',
+            date: ''
+        });
 
 
     useEffect(()=>{
@@ -15,6 +22,7 @@ const Dashboard = () =>{
         }
         else{
             fetchExpenses(token);
+            fetchCategories(token);
         }
     },[navigate]);
 
@@ -33,6 +41,17 @@ const Dashboard = () =>{
     };
 
 
+    const fetchCategories = async (token) =>{
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/category/',{
+                headers:{Authorization:`Token ${token}`}
+            });
+            setCategories(response.data);
+        } catch (error) {
+            console.error("Error in fetching categories",error);
+        }
+    }
+
     const handleDelete = async (id) =>{
         const token = localStorage.getItem('access_token');
         if (window.confirm("Are you sure want to delete this?")){
@@ -45,7 +64,7 @@ const Dashboard = () =>{
                 alert("Failed to delete.....")
             }
         }
-    }
+    };
 
 
 
@@ -55,6 +74,30 @@ const Dashboard = () =>{
     const handleLogout = () =>{
         localStorage.removeItem('access_token');
         navigate('/login');
+    };
+
+
+
+
+
+
+    const handleChange = (e) =>{
+        setFormData({...formData,[e.target.name]:e.target.value});  
+    }
+
+
+    const handleSubmit = async(e) =>{
+        e.preventDefault();
+        const token = localStorage.getItem('access_token')
+        try {
+            await axios.post('http://127.0.0.1:8000/api/expenses/', formData,
+                {headers:{Authorization:`Token ${token}`}});
+            alert('Item added successfully');
+            setFormData({title:'',category:'',amount:'',date:''});
+            fetchExpenses(token);
+        } catch (error) {
+            console.error("Error to add item",error);
+        }
     };
 
 
@@ -94,6 +137,26 @@ const Dashboard = () =>{
                     </tbody>
 
                 </table>)}
+
+                <form onSubmit={handleSubmit}>
+                    <input name="title"  value={formData.title} onChange={handleChange} placeholder="Title" required/>
+
+
+                    <select name="category"  value={formData.category} onChange={handleChange} required>
+                        <option value="">
+                        Select Category
+                        </option>
+                        {categories.map(cat =>(
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))};
+                    </select>
+
+
+
+                    <input name="amount"  value={formData.amount} onChange={handleChange} placeholder="Amount" required/>
+                    <input name="date"  value={formData.date} onChange={handleChange} placeholder="Date" type="date" required/>
+                    <button type="submit">Add Expenses</button>
+                </form>
             </main>
         </div>
     );
