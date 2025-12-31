@@ -3,7 +3,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import LoginForm from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const theme = createTheme({
   palette:{
@@ -12,8 +13,7 @@ const theme = createTheme({
       main: '#1976d2',
     }
   }
-})
-
+});
 
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
 
     <ThemeProvider theme={theme}>
       <CssBaseline/>
-
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
 
 
 
@@ -33,6 +33,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard/>} />
       </Routes>
     </Router>
+    </LocalizationProvider>
     </ThemeProvider>
   );
 
