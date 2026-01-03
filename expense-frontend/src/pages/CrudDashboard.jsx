@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { Box, AppBar, Toolbar, Typography, Container, Button, CircularProgress } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import Sidebar from '../components/Sidebar';
 import ExpenseTable from '../components/ExpenseTable';
 import ExpenseForm from '../components/ExpenseForm';
+import Navbar from '../components/Navbar';
+
 
 export default function CrudDashboard() {
   const navigate = useNavigate();
@@ -72,9 +73,8 @@ export default function CrudDashboard() {
     }
   };
 
-  const handleEdit = (expense) => console.log('Edit:', expense); // Implement
+  const handleEdit = (expense) => console.log('Edit:', expense);
   const handleDelete = async (id) => {
-    // Implement delete API call + refresh
     console.log('Delete:', id);
   };
 
@@ -86,11 +86,7 @@ export default function CrudDashboard() {
 
   return (
     <Box sx={{ display: 'flex', width: '100vw', minHeight: '100vh', bgcolor: '#121212' }}>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, bgcolor: '#111', borderBottom: '1px solid #333' }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>EXPENSE PRO</Typography>
-        </Toolbar>
-      </AppBar>
+      <Navbar onAddExpense={handleOpen} onLogout={handleLogout} />
 
       <Sidebar onLogout={handleLogout} />
       
@@ -99,9 +95,6 @@ export default function CrudDashboard() {
         <Container maxWidth="xl">
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
             <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'white' }}>Financial Overview</Typography>
-            <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpen} sx={{ borderRadius: 2 }}>
-              ADD EXPENSE
-            </Button>
           </Box>
 
           <ExpenseTable expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
