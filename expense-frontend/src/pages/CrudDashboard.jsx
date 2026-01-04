@@ -19,6 +19,7 @@ export default function CrudDashboard() {
   const [formData, setFormData] = useState({
     title: '', category: '', amount: '', date: dayjs()
   });
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -49,6 +50,7 @@ export default function CrudDashboard() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
+    setEditId(null);
     setFormData({ title: '', category: '', amount: '', date: dayjs() });
   };
 
@@ -62,10 +64,18 @@ export default function CrudDashboard() {
       ...formData,
       date: dayjs(formData.date).format("YYYY-MM-DD")
     };
+    const config = {
+      headers: { Authorization: `Token ${token}` }
+    };
+
+
     try {
-      await axios.post('http://127.0.0.1:8000/api/expenses/', payload, {
-        headers: { Authorization: `Token ${token}` }
-      });
+
+      if (editId == null){
+        await axios.post('http://127.0.0.1:8000/api/expenses',payload,config);
+      }else{
+        await axios.put(`http://127.0.0.1:8000/api/expenses/${editId}/`,payload,config);
+      }
       handleClose();
       fetchData(token);
     } catch (error) {
@@ -73,7 +83,22 @@ export default function CrudDashboard() {
     }
   };
 
-  const handleEdit = (expense) => console.log('Edit:', expense);
+  const handleEdit = (expense) =>{
+    setEditId(expense.id);
+    setFormData({
+      title: expense.title,
+      category: expense.category,
+      amount: expense.amount,
+      date: dayjs(expense.date),
+    });
+    setOpen(true);
+  };
+
+
+
+
+
+
   const handleDelete = async (id) => {
     console.log('Delete:', id);
   };
