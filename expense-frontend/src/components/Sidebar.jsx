@@ -8,12 +8,13 @@ import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-export default function Sidebar({ onLogout }) {
+export default function Sidebar({open, onLogout }) {
   const navigate = useNavigate();
 
   return (
     <Drawer 
-      variant="permanent" 
+      variant="persistent" 
+      open={open}
       sx={{ 
         width: drawerWidth, 
         flexShrink: 0, 

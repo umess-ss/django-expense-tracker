@@ -20,6 +20,8 @@ export default function CrudDashboard() {
     title: '', category: '', amount: '', date: dayjs()
   });
   const [editId, setEditId] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const drawerWidth = 240;
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -103,6 +105,12 @@ export default function CrudDashboard() {
     console.log('Delete:', id);
   };
 
+
+  const handleToggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+
   if (loading) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: '#121212' }}>
       <CircularProgress />
@@ -111,11 +119,14 @@ export default function CrudDashboard() {
 
   return (
     <Box sx={{ display: 'flex', width: '100vw', minHeight: '100vh', bgcolor: '#121212' }}>
-      <Navbar onAddExpense={handleOpen} onLogout={handleLogout} />
+      <Navbar onAddExpense={handleOpen} onLogout={handleLogout} onToggleSidebar={handleToggleSidebar} />
 
-      <Sidebar onLogout={handleLogout} />
+      <Sidebar open={sidebarOpen} onLogout={handleLogout}/>
       
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { xs: '100%', md: `calc(100% - ${240}px)` } }}>
+      <Box component="main" 
+      sx={{ flexGrow: 1, p: 3, transition: 'margin 0.3s ease',
+        ml: sidebarOpen ? 0 : `${-drawerWidth}px`, }
+      }>
         <Toolbar />
         <Container maxWidth="xl">
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>

@@ -11,7 +11,7 @@ import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 
-export default function Navbar({ onAddExpense, onLogout }) {
+export default function Navbar({ onAddExpense, onLogout, onToggleSidebar }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -45,6 +45,7 @@ export default function Navbar({ onAddExpense, onLogout }) {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 1 }}
+            onClick={onToggleSidebar}
           >
             <MenuIcon />
           </IconButton>
