@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import LoginForm from "./pages/Login";
 import CrudDashboard from "./pages/CrudDashboard";
+import Analytics from "./pages/Analytics";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/" element={<Navigate to = "/login" />} />
         <Route path="/login" element={<LoginForm/>} />
         <Route path="/dashboard" element={<CrudDashboard/>} />
+        <Route path="/charts" element={<Analytics />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </Router>

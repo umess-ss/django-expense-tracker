@@ -11,7 +11,7 @@ import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 
-export default function Navbar({ onAddExpense, onLogout, onToggleSidebar }) {
+export default function Navbar({ onAddExpense, onLogout, onToggleSidebar, showAddExpense = true }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -37,7 +37,6 @@ export default function Navbar({ onAddExpense, onLogout, onToggleSidebar }) {
       }}
     >
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* Left: menu icon + title */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton
             size="large"
@@ -54,16 +53,15 @@ export default function Navbar({ onAddExpense, onLogout, onToggleSidebar }) {
           </Typography>
         </Box>
 
-        {/* Right: Add Expense + account menu */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button
+          {showAddExpense && (<Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={onAddExpense}
             sx={{ borderRadius: 2 }}
           >
             ADD EXPENSE
-          </Button>
+          </Button>)}
 
           <IconButton
             size="large"
