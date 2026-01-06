@@ -31,9 +31,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             Expense.objects.filter(user=user).values('category__name').annotate(total=Sum('amount')).order_by('-total')
         )
 
-        monthly_data = ({
+        monthly_data = (
             Expense.objects.filter(user=user).annotate(month=TruncMonth('date')).values('date__month').annotate(total=Sum('amount')).order_by('month')
-        })
+        )
 
 
         return Response({

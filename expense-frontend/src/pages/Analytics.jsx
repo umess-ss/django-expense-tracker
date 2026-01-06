@@ -24,25 +24,23 @@ const Analytics = () => {
     const token = localStorage.getItem("access_token");
     if (!token) return navigate("/login");
 
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8000/api/expenses/analytics",
-          { headers: { Authorization: `Token ${token}` } }
-        );
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(
+        "http://localhost:8000/api/expenses/analytics",
+        { headers: { Authorization: `Token ${token}` } }
+      );
 
-        const data = response.data;
-        const normalizedByMonth = Array.isArray(data.by_month?.[0])
-          ? data.by_month[0]
-          : data.by_month || [];
+      const data = response.data;
 
-        setChartData({
-          by_category: data.by_category || [],
-          by_month: normalizedByMonth,
-        });
-      } catch (err) {
-        console.error("Error fetching analytics", err);
-      }
+      setChartData({
+        by_category: data.by_category || [],
+        by_month: data.by_month || [],
+      });
+    } catch (err) {
+      console.error("Error fetching analytics", err);
+    }
     };
 
     fetchData();
