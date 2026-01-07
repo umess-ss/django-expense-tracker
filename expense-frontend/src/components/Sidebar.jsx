@@ -5,6 +5,8 @@ import {
 import { Dashboard as DashIcon, Logout } from '@mui/icons-material';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import { useNavigate } from 'react-router-dom';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+
 
 const drawerWidth = 240;
 
@@ -36,6 +38,12 @@ export default function Sidebar({open, onLogout }) {
           <ListItemIcon><PieChartIcon sx={{ color: '#1976d2' }} /></ListItemIcon>
           <ListItemText primary="Analytics" />
         </ListItemButton>
+
+        <ListItemButton onClick={() => navigate('/budgets')}>
+  <ListItemIcon><TrendingUpIcon sx={{ color: '#1976d2' }} /></ListItemIcon>
+  <ListItemText primary="Budgets" />
+</ListItemButton>
+
         <ListItemButton onClick={onLogout}>
           <ListItemIcon><Logout sx={{ color: '#f44336' }} /></ListItemIcon>
           <ListItemText primary="Logout" />

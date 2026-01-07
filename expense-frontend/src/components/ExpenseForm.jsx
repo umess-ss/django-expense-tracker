@@ -4,7 +4,7 @@ import {
   FormControl, InputLabel, Select, MenuItem, Button, Box
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
+
 
 export default function ExpenseForm({ open, onClose, onSubmit, formData, categories, onChange }) {
   const handleSubmit = (e) => {

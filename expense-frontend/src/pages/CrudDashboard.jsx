@@ -74,7 +74,7 @@ export default function CrudDashboard() {
     try {
 
       if (editId == null){
-        await axios.post('http://127.0.0.1:8000/api/expenses',payload,config);
+        await axios.post('http://127.0.0.1:8000/api/expenses/',payload,config);
       }else{
         await axios.put(`http://127.0.0.1:8000/api/expenses/${editId}/`,payload,config);
       }

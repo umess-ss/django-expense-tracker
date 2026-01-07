@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import TextChoices
 from django.utils import timezone
-
+from django.conf import settings
 
 class Category(models.Model):
     class CategoryType(TextChoices):
@@ -44,3 +44,14 @@ class Income(Transactions):
         verbose_name_plural = 'incomes'
 
 
+class Budget(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="budgets")
+    category = models.ForeignKey("category",on_delete=models.CASCADE,related_name="budgets")
+    amount = models.DecimalField(max_digits=10,decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = (("user", "category",),)
+
+    def __str__(self):
+        return f"{self.user} - {self.category} (Monthly)"

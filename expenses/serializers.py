@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Expense, Income, Category
+from .models import Expense, Income, Category, Budget
 from django.db import models
 from django.db.models import Q
 
@@ -41,3 +41,14 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id','name', 'transaction_type']
+
+
+
+
+
+class BudgetSerializer(serializers.ModelSerializer):
+     category_name = serializers.CharField(source="category.name", read_only=True)
+
+     class Meta:
+          model = Budget
+          fields = ["id", "category","category_name", "amount"]

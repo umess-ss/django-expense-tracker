@@ -1,10 +1,12 @@
-from .models import Expense, Income, Category
-from .serializers import ExpenseSerializer, IncomeSerializer, CategorySerializer
+from .models import Expense, Income, Category, Budget
+from .serializers import ExpenseSerializer, IncomeSerializer, CategorySerializer, BudgetSerializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from django.db.models import Sum, Q
 from rest_framework.response import Response
 from django.db.models.functions import TruncMonth
+from django.utils.timezone import now
+from rest_framework.views import APIView
 
 
 
@@ -78,3 +80,54 @@ class CategoryViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class BudgetViewset(viewsets.ModelViewSet):
+    serializer_class = BudgetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Budget.objects.filter(user=self.request.user)
+    
+    def perform_create(self,serializer):
+        existing = Budget.objects.filter(user=self.request.user, category_id=self.request.data.get("category")).first()
+
+        if existing:
+            serializer.instance = existing
+        serializer.save(user=self.request.user)
+
+
+
+
+class BudgetProgressView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+
+    def get(self,request):
+        user=request.user
+        today= now().date()
+
+        expenses = (Expense.objects.filter(user=user, date__year=today.year, date__month=today.month).values("category_id").annotate(spent=Sum("amount")))
+
+
+        spent_map = {e["category_id"]:e["spent"] for e in expenses}
+
+        budgets = Budget.objects.filter(user=user,period="monthly").select_related("category")
+
+
+
+        data = []
+
+        for b in budgets:
+            spent = spent_map.get(b.category_id,0) or 0
+            percent = (float(spent)/float(b.amount)) * 100 if b.amount >0 else 0
+            data.append({
+                "id":b.id,
+                "category":b.category.name,
+                "budget_limit":str(b.amount),
+                "actual_limit":str(spent),
+                "remaining":str(b.amount - spent),
+                "percent":round(percent,1)
+            })
+
+        return Response(data)
