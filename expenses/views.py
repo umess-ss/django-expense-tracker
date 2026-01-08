@@ -112,7 +112,7 @@ class BudgetProgressView(APIView):
 
         spent_map = {e["category_id"]:e["spent"] for e in expenses}
 
-        budgets = Budget.objects.filter(user=user,period="monthly").select_related("category")
+        budgets = Budget.objects.filter(user=user).select_related("category")
 
 
 

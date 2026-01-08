@@ -6,6 +6,7 @@ import CrudDashboard from "./pages/CrudDashboard";
 import Analytics from "./pages/Analytics";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import BudgetProgress from "./pages/BudgetProgress";
 
 const theme = createTheme({
   palette:{
@@ -30,6 +31,7 @@ function App() {
         <Route path="/login" element={<LoginForm/>} />
         <Route path="/dashboard" element={<CrudDashboard/>} />
         <Route path="/charts" element={<Analytics />} />
+        <Route path="/budgets" element={<BudgetProgress />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </Router>
