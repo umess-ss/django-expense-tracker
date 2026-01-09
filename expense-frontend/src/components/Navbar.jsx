@@ -60,7 +60,7 @@ export default function Navbar({ onAddExpense, onLogout, onToggleSidebar, showAd
             onClick={onAddExpense}
             sx={{ borderRadius: 2 }}
           >
-            ADD EXPENSE
+            {window.location.pathname === "/budgets" ?"SET BUDGET" : "Add EXPENSE"}
           </Button>)}
 
           <IconButton

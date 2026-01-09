@@ -9,17 +9,25 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import BudgetForm from "../components/BudgetForm";
 
 export default function BudgetProgress() {
   const navigate = useNavigate();
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+
+  // form states
+  const [open,setOpen] = useState(false);
+  const [categories,setCategories] = useState([]);
+  const [formData, setFormData] = useState({category:"",amount:""});
   const drawerWidth = 240;
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) return navigate("/login");
+    fetchInitialData(token);
     fetchBudgetProgress(token);
   }, [navigate]);
 
@@ -43,6 +51,50 @@ export default function BudgetProgress() {
 
   const handleToggleSidebar = () => setSidebarOpen((prev) => !prev);
 
+  // form handlers
+  const handleOpenForm = () => setOpen(true);
+  const handleCloseForm = () => {
+    setOpen(false);
+    setFormData({category:"",amount:""})
+  }
+
+  const handleInputChange = (field,value) =>{
+    setFormData(prev=>({...prev,[field]:value}));
+  };
+
+
+  const fetchInitialData = async(token)=>{
+    try {
+    const [progRes,catRes] = await Promise.all([
+      axios.get("http://127.0.0.1:8000/api/budgets/progress/",{headers:{Authorization:  `Token ${token}`}}),
+      axios.get("http://127.0.0.1:8000/api/category/",{headers:{Authorization:  `Token ${token}`}}),
+    ]);
+    setBudgets(progRes.data);
+    setCategories(catRes.data);      
+    } catch (error) {
+      console.error("Failed to fetch data",error)
+    }finally{
+      setLoading(false);
+    }
+
+  }
+
+
+  const handleSubmit = async ()=>{
+    const token = localStorage.getItem("access_token");
+    const dataToSend = {
+      category : parseInt(formData.category),
+      amount : parseFloat(formData.amount),
+    };
+    try {
+        await axios.post("http://127.0.0.1:8000/api/budgets/",dataToSend,{headers:{Authorization:`Token ${token}`}});
+        setOpen(false);
+        fetchBudgetProgress(token);
+    } catch (error) {
+      console.error("Error saving budget",error.response.data);
+    }    
+  }
+
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", bgcolor: "#0a0a0a" }}>
@@ -53,7 +105,7 @@ export default function BudgetProgress() {
 
   return (
     <Box sx={{ display: "flex", width: "100vw", minHeight: "100vh", bgcolor: "#0a0a0a" }}>
-      <Navbar onLogout={handleLogout} onToggleSidebar={handleToggleSidebar} />
+      <Navbar onAddExpense={handleOpenForm} onLogout={handleLogout} onToggleSidebar={handleToggleSidebar} />
       <Sidebar open={sidebarOpen} onLogout={handleLogout} />
 
       <Box component="main" sx={{ 
@@ -71,7 +123,7 @@ export default function BudgetProgress() {
             </Typography>
           </Box>
 
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             {budgets.map((item) => {
               const isOver = item.percent > 100;
               const isWarning = item.percent > 80 && !isOver;
@@ -87,21 +139,22 @@ export default function BudgetProgress() {
                   key={item.id}
                   elevation={0}
                   sx={{
-                    p: 3,
+                    p: 2,
                     bgcolor: "#161616",
                     color: "white",
                     borderRadius: "20px",
                     border: "1px solid #2a2a2a",
                     transition: "all 0.3s ease",
                     "&:hover": {
-                      transform: "translateY(-4px)",
+                      transform: "translateY(-5px)",
                       bgcolor: "#1c1c1c",
                       borderColor: isOver ? "#ff174455" : "#4caf5055",
-                      boxShadow: "0 10px 30px -10px rgba(0,0,0,0.5)"
                     },
                   }}
                 >
-                  {/* Header: Icon + Category + Percent */}
+
+
+
                   <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                     <Avatar sx={{ bgcolor: '#252525', mr: 2, width: 48, height: 48 }}>
                       <AccountBalanceWalletIcon sx={{ color: isOver ? '#ff1744' : '#4caf50' }} />
@@ -179,6 +232,15 @@ export default function BudgetProgress() {
             })}
           </Stack>
         </Container>
+
+        <BudgetForm 
+        open={open}
+        onClose={handleCloseForm}
+        onSubmit={handleSubmit}
+        formData={formData}
+        categories={categories}
+        onChange={handleInputChange}
+        />
       </Box>
     </Box>
   );
