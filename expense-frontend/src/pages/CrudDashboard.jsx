@@ -82,6 +82,7 @@ export default function CrudDashboard() {
       fetchData(token);
     } catch (error) {
       console.error("Error adding expense", error);
+      console.error("Django Error Details:", error.response.data);
     }
   };
 
@@ -101,9 +102,24 @@ export default function CrudDashboard() {
 
 
 
-  const handleDelete = async (id) => {
-    console.log('Delete:', id);
-  };
+const handleDelete = async (id) => {
+    const token = localStorage.getItem('access_token');
+
+    if (window.confirm("Are you sure you want to delete this?")) {
+        try {
+            await axios.delete(`http://127.0.0.1:8000/api/expenses/${id}/`, {
+                headers: { 
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            setExpenses(prev => prev.filter(exp => exp.id !== id));
+            
+        } catch (error) {
+            console.log("Failed to delete", error);
+        }
+    }
+};
 
 
   const handleToggleSidebar = () => {
