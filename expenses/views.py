@@ -1,13 +1,15 @@
 from .models import Expense, Income, Category, Budget
 from .serializers import ExpenseSerializer, IncomeSerializer, CategorySerializer, BudgetSerializer
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from django.db.models import Sum, Q
 from rest_framework.response import Response
 from django.db.models.functions import TruncMonth
 from django.utils.timezone import now
 from rest_framework.views import APIView
-
+import csv
+from django.http import HttpResponse
+from datetime import datetime, timedelta
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
@@ -15,10 +17,71 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Expense.objects.filter(user=self.request.user)
+        queryset = Expense.objects.filter(user=self.request.user).select_related("category")
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+
+        if start_date:
+            queryset = queryset.filter(date__gte = start_date)
+        if end_date:
+            queryset = queryset.filter(date__lte = end_date)
+
+        return queryset.order_by("-date")
+    
+    @action(detail=False,methods=["get"])
+    def export_csv(self,request):
+        expenses = self.get_queryset()
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="expenses.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['Date', 'Title','Category', 'Amount'])
+
+
+        # write data
+        for e in expenses:
+            writer.writerow([
+                e.date.strftime('%Y-%m-%d'),
+                e.title,
+                e.category.name if e.category else 'N/A',
+                str(e.amount)
+            ])
+        return response
+    
+
+
+    @action(detail=False,methods=["get"])
+    def summary_stats(self,request):
+        expenses = self.get_queryset()
+
+        total = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+        count = expenses.count()
+        avg = total/count if count > 0 else 0
+
+
+
+        by_category = expenses.values("category__name").annotate(
+            total=Sum("amount")
+        ).order_by("-total")
+
+        return Response({
+            'total':float(total),
+            'count':count,
+            'average':float(avg),
+            'by_category':list(by_category)
+        })
+
+    
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        if instance.user == self.request.user:
+            instance.delete()
 
     @action(detail=False, methods=['get'])
     def total(self,request):
@@ -90,11 +153,16 @@ class BudgetViewset(viewsets.ModelViewSet):
         return Budget.objects.filter(user=self.request.user)
     
     def perform_create(self,serializer):
-        existing = Budget.objects.filter(user=self.request.user, category_id=self.request.data.get("category")).first()
+        category = serializer.validated_data['category']
+        amount = serializer.validated_data['amount']
 
-        if existing:
-            serializer.instance = existing
-        serializer.save(user=self.request.user)
+        budget, created = Budget.objects.update_or_create(
+            user=self.request.user,
+            category=category,
+            defaults={"amount":amount}
+        )
+
+        serializer.instance = budget
 
 
 

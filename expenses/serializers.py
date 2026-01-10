@@ -6,6 +6,7 @@ from django.db.models import Q
 
 class ExpenseSerializer(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField(source='category.name')
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
 
     class Meta:
          model = Expense
