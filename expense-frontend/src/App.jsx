@@ -1,5 +1,6 @@
 import { BrowserRouter as Router,Routes, Route,Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {ToastContainer} from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
 import LoginForm from "./pages/Login";
 import CrudDashboard from "./pages/CrudDashboard";
@@ -21,8 +22,19 @@ const theme = createTheme({
 
 function App() {
   return(
-
-
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     <ThemeProvider theme={theme}>
       <CssBaseline/>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -39,6 +51,7 @@ function App() {
     </Router>
     </LocalizationProvider>
     </ThemeProvider>
+    </>
   );
 
 }

@@ -6,6 +6,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { toast } from 'react-toastify';
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -35,6 +39,20 @@ export default function BudgetProgress() {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/budgets/progress/", {
         headers: { Authorization: `Token ${token}` },
+      });
+
+      const budgetData = response.data;
+      budgetData.forEach((item)=>{
+        if (item.percent > 100){
+          toast.error(`⚠️ ${item.category}: Budget exceeded by Rs. ${Math.abs(item.remaining)}!`, {
+            toastId: `over-${item.id}`,});
+        } else if (item.percent > 90) {
+          toast.warning(`🔔 ${item.category}: ${Math.round(100 - item.percent)}% budget remaining`, {
+            toastId: `warning-${item.id}`,
+          });
+        }
+
+        
       });
       setBudgets(response.data);
     } catch (error) {
