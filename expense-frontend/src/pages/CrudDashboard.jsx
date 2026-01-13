@@ -197,7 +197,7 @@ const handleDelete = async (id) => {
 
   return (
     <Box sx={{ display: 'flex', width: '100vw', minHeight: '100vh', bgcolor: '#121212' }}>
-      <Navbar onAddExpense={handleOpen} onLogout={handleLogout} onToggleSidebar={handleToggleSidebar} />
+      <Navbar onAddExpense={handleOpen} onAddIncome={()=>navigate("/income")} onLogout={handleLogout} onToggleSidebar={handleToggleSidebar} />
 
       <Sidebar open={sidebarOpen} onLogout={handleLogout}/>
       

@@ -34,6 +34,10 @@ export default function Sidebar({open, onLogout }) {
           <ListItemIcon><DashIcon sx={{ color: '#1976d2' }} /></ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItemButton>
+        <ListItemButton onClick={() => navigate('/income')}>
+          <ListItemIcon><DashIcon sx={{ color: '#1976d2' }} /></ListItemIcon>
+          <ListItemText primary="Income" />
+        </ListItemButton>
         <ListItemButton onClick={() => navigate('/charts')}>
           <ListItemIcon><PieChartIcon sx={{ color: '#1976d2' }} /></ListItemIcon>
           <ListItemText primary="Analytics" />

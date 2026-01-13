@@ -10,8 +10,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import { Add as AddIcon } from '@mui/icons-material';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
-export default function Navbar({ onAddExpense, onLogout, onToggleSidebar, showAddExpense = true }) {
+export default function Navbar({ onAddExpense, onAddIncome, onLogout, onToggleSidebar, showAddExpense = true }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -61,7 +62,19 @@ export default function Navbar({ onAddExpense, onLogout, onToggleSidebar, showAd
             sx={{ borderRadius: 2 }}
           >
             {window.location.pathname === "/budgets" ?"SET BUDGET" : "Add EXPENSE"}
-          </Button>)}
+          </Button>
+        )}
+          <Button
+            variant="contained"
+            startIcon={<TrendingUpIcon />}
+            onClick={onAddIncome}
+            sx={{ 
+              bgcolor: '#4caf50',
+              '&:hover': { bgcolor: '#388e3c' }
+            }}
+          >
+            Add Income
+          </Button>
 
           <IconButton
             size="large"

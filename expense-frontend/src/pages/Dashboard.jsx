@@ -95,14 +95,25 @@ const Dashboard = () =>{
 
     const handleDelete = async (id) =>{
         const token = localStorage.getItem('access_token');
+        console.log("Token being sent:", token);
+        if (!token) {
+        alert("Session expired. Please login again.");
+        navigate("/login");
+        return;
+    }
         if (window.confirm("Are you sure want to delete this?")){
             try {
                 await axios.delete(`http://127.0.0.1:8000/api/expenses/${id}/`,{
                     headers:{Authorization:`Token ${token}`}
                 });
-                setExpenses(expenses.filter(exp=>exp.id !== id));
+                setExpenses(prevExpenses => prevExpenses.filter(exp => exp.id !== id));
             } catch (error) {
-                alert("Failed to delete.....")
+                console.error("Delete Error details:", error.response?.data);
+            if (error.response?.status === 401) {
+                alert("Unauthorized: Your session may have expired.");
+            } else {
+                alert("Failed to delete the item.");
+            }
             }
         }
     };
